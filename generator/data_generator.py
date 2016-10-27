@@ -1,7 +1,6 @@
 import random
 
 from common.city import City
-from generator.storing import store_to_file
 
 
 def generate_random_cities(count=100):
