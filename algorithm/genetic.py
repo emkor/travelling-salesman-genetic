@@ -1,7 +1,6 @@
 import random
 from datetime import datetime
 import matplotlib.pyplot as plt
-import numpy as np
 import operator
 
 from common.travel import generate_travel, Travel
