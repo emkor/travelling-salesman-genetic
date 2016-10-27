@@ -1,4 +1,5 @@
 import math
+import random
 
 from datetime import datetime
 
@@ -16,3 +17,10 @@ def distance(city_a, city_b):
 
 def log(message):
     print("{} | {}".format(datetime.now(), str(message)))
+
+
+def random_ratio():
+    """
+    :rtype: float
+    """
+    return random.uniform(0.0, 1.0)
