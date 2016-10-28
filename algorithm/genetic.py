@@ -69,13 +69,13 @@ class GeneticSalesman(AbstractAlgorithm):
 
     def selection(self):
         log("Started {}. gen. selection from {} of population...".format(self.generation, len(self.population)))
-        population_to_evaluation = {travel: travel.length for travel in self.population}
-        travel_distance_sorted_tuple_list = sorted(population_to_evaluation.items(), key=operator.itemgetter(1))
-        sorted_population_length = float(len(travel_distance_sorted_tuple_list))
+        travel_length_tuples_list = [(travel, travel.length) for travel in self.population]
+        travel_length_tuples_list.sort(key=lambda tuple: tuple[1])
+        sorted_population_length = float(len(travel_length_tuples_list))
         survivors_count = int(self.survival_ratio * sorted_population_length)
         log("Calculating survivors count: {} * {} = {}".format(self.survival_ratio, sorted_population_length,
                                                                survivors_count))
-        self.population = [travel for travel, _ in travel_distance_sorted_tuple_list[:survivors_count]]
+        self.population = [travel for travel, _ in travel_length_tuples_list[:survivors_count]]
         log("Ended selection, best {} elems survived!".format(len(self.population)))
 
     def crossover(self):
