@@ -1,7 +1,6 @@
 import random
 from datetime import datetime
 import matplotlib.pyplot as plt
-import operator
 
 from algorithm.abstract_algorithm import AbstractAlgorithm
 from common.travel import generate_travel, Travel
