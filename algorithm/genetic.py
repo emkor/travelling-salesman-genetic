@@ -3,12 +3,13 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import operator
 
+from algorithm.abstract_algorithm import AbstractAlgorithm
 from common.travel import generate_travel, Travel
 from common.utils import log, random_ratio
 from generator.storing import load_from_file
 
 
-class GeneticSalesman(object):
+class GeneticSalesman(AbstractAlgorithm):
     def __init__(self, population_size, max_generations, timeout, dataset_filename, survival_ratio,
                  mutation_probability):
         """
@@ -25,14 +26,11 @@ class GeneticSalesman(object):
         self.max_generations = max_generations
         self.timeout = timeout
         self.population_size = population_size
-        self.cities = []
-        self.population = []
-        self.generation = 1
-        self.stats = {}
-        self.start_time = None
+        self._init_variables()
 
     def run(self):
         log("Started run!")
+        self._init_variables()
         self.initialize()
         self.evaluate()
         while self.generation <= self.max_generations and not self._is_timeout():
@@ -43,6 +41,9 @@ class GeneticSalesman(object):
             log("Gen. {}. stats: {}".format(self.generation, self.stats.get(self.generation)))
             self.generation += 1
         log("Ended run! Took {0:.1f} seconds.".format((datetime.now() - self.start_time).total_seconds()))
+
+    def get_stats(self):
+        return self.stats
 
     def initialize(self):
         self.start_time = datetime.now()
@@ -61,14 +62,19 @@ class GeneticSalesman(object):
         min_distance = min(population_to_evaluation.values())
         max_distance = max(population_to_evaluation.values())
         avg_distance = sum(population_to_evaluation.values()) / len(population_to_evaluation.values())
-        self.stats.update({self.generation: {"min": min_distance, "max": max_distance, "avg": avg_distance}})
+        time = (datetime.now() - self.start_time).total_seconds()
+        self.stats.update(
+            {self.generation: {"min": min_distance, "max": max_distance, "avg": avg_distance, "time": time}})
         log("Ended evaluation!")
 
     def selection(self):
-        log("Started {}. gen. selection...".format(self.generation))
+        log("Started {}. gen. selection from {} of population...".format(self.generation, len(self.population)))
         population_to_evaluation = {travel: travel.length for travel in self.population}
         travel_distance_sorted_tuple_list = sorted(population_to_evaluation.items(), key=operator.itemgetter(1))
-        survivors_count = int(self.survival_ratio * len(travel_distance_sorted_tuple_list))
+        sorted_population_length = float(len(travel_distance_sorted_tuple_list))
+        survivors_count = int(self.survival_ratio * sorted_population_length)
+        log("Calculating survivors count: {} * {} = {}".format(self.survival_ratio, sorted_population_length,
+                                                               survivors_count))
         self.population = [travel for travel, _ in travel_distance_sorted_tuple_list[:survivors_count]]
         log("Ended selection, best {} elems survived!".format(len(self.population)))
 
@@ -87,6 +93,13 @@ class GeneticSalesman(object):
                 self._swap_random_points(travel)
                 counter += 1
         log("Ended mutation! {} elements were mutated.".format(counter))
+
+    def _init_variables(self):
+        self.cities = []
+        self.population = []
+        self.generation = 1
+        self.stats = {}
+        self.start_time = None
 
     def _swap_random_points(self, travel):
         first_random_point = self._random_travel_point()
@@ -124,5 +137,7 @@ class GeneticSalesman(object):
         mins = [stats.get("min") for _, stats in self.stats.iteritems()]
         avgs = [stats.get("avg") for _, stats in self.stats.iteritems()]
         maxs = [stats.get("max") for _, stats in self.stats.iteritems()]
-        plt.plot(generations, mins, 'r--', generations, avgs, 'bs', generations, maxs, 'g^')
+        plt.plot(generations, mins, 'r--', generations, avgs, 'b--', generations, maxs, 'g--')
+        plt.xlabel("Generation")
+        plt.ylabel("max / avg / min distance of population")
         plt.show()
