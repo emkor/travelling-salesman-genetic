@@ -112,7 +112,11 @@ class GeneticSalesman(AbstractAlgorithm):
         left_elem = self._get_random_population_elem()
         right_elem = self._get_random_population_elem()
         pivot = self._random_travel_point()
-        return Travel(left_elem.city_numbers[:pivot] + right_elem.city_numbers[pivot:], self.cities)
+        new_city_numbers = left_elem.city_numbers[:pivot]
+        for right_elem_city_number in right_elem.city_numbers:
+            if right_elem_city_number not in new_city_numbers:
+                new_city_numbers.append(right_elem_city_number)
+        return Travel(new_city_numbers, self.cities)
 
     def _get_random_population_elem(self):
         """

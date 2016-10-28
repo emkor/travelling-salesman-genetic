@@ -36,7 +36,7 @@ class Travel(object):
         return total_distance
 
     def __str__(self):
-        return "Travel[{0};{1:.2f}km]".format(len(self.city_numbers), self.length)
+        return "Travel[{0};{1:.2f}km]".format(len(set(self.city_numbers)), self.length)
 
     def __repr__(self):
         return self.__str__()
