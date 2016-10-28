@@ -144,3 +144,6 @@ class GeneticSalesman(AbstractAlgorithm):
         plt.xlabel("Generation")
         plt.ylabel("max / avg / min distance of population")
         plt.show()
+
+    def __str__(self):
+        return "GeneticSalesman [population: {} survival ratio: {} mutation: {}]".format(self.population_size, self.survival_ratio, self.mutation_probability)
