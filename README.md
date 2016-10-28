@@ -1,2 +1,2 @@
 # travelling-salesman-genetic
-Academic project for learning genetic algorhitms
+Academic project for learning genetic algorhitms purposes

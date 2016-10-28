@@ -20,7 +20,7 @@ class GeneticSalesman(AbstractAlgorithm):
         :type mutation_probability: float
         """
         self.mutation_probability = mutation_probability
-        self.survival_ratio = survival_ratio
+        self.survives = survival_ratio
         self.dataset_filename = dataset_filename
         self.max_generations = max_generations
         self.timeout = timeout
@@ -67,25 +67,20 @@ class GeneticSalesman(AbstractAlgorithm):
         log("Ended evaluation!")
 
     def selection(self):
-        log("Started {}. gen. selection from {} of population...".format(self.generation, len(self.population)))
         travel_length_tuples_list = [(travel, travel.length) for travel in self.population]
         travel_length_tuples_list.sort(key=lambda tuple: tuple[1])
         sorted_population_length = float(len(travel_length_tuples_list))
-        survivors_count = int(self.survival_ratio * sorted_population_length)
-        log("Calculating survivors count: {} * {} = {}".format(self.survival_ratio, sorted_population_length,
-                                                               survivors_count))
+        survivors_count = int(self.survives * sorted_population_length)
         self.population = [travel for travel, _ in travel_length_tuples_list[:survivors_count]]
         log("Ended selection, best {} elems survived!".format(len(self.population)))
 
     def crossover(self):
-        log("Started {}. gen. crossover...".format(self.generation))
         while len(self.population) < self.population_size:
             new_elem = self._crossover_single_elem()
             self.population.append(new_elem)
         log("Ended crossover, population counts {} elements again!".format(len(self.population)))
 
     def mutation(self):
-        log("Started {}. gen. mutation...".format(self.generation))
         counter = 0
         for travel in self.population:
             if random_ratio() <= self.mutation_probability:
@@ -146,4 +141,4 @@ class GeneticSalesman(AbstractAlgorithm):
         plt.show()
 
     def __str__(self):
-        return "GeneticSalesman [population: {} survival ratio: {} mutation: {}]".format(self.population_size, self.survival_ratio, self.mutation_probability)
+        return "GeneticSalesman [population: {} survives: {} mutates: {}]".format(self.population_size, self.survives, self.mutation_probability)
