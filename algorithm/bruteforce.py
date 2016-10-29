@@ -26,6 +26,10 @@ class Bruteforce(AbstractAlgorithm):
 
         for travel_permutation in itertools.permutations(range(0, len(self.cities))):
             if self._seconds_since() > self.timeout:
+                time = self._seconds_since()
+                self.stats.update(
+                    {self.iteration: {"min": self.best_travel.length, "avg": self.best_travel.length, "max": self.best_travel.length,
+                                      "time": time}})
                 break
             else:
                 travel = Travel(travel_permutation, self.cities)

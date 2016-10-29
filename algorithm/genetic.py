@@ -82,10 +82,15 @@ class GeneticSalesman(AbstractAlgorithm):
 
     def mutation(self):
         counter = 0
+        new_populaion = []
         for travel in self.population:
             if random_ratio() <= self.mutation_probability:
-                self._swap_random_points(travel)
+                new_travel = self._swap_random_points(travel)
+                new_populaion.append(new_travel)
                 counter += 1
+            else:
+                new_populaion.append(travel)
+        self.population = new_populaion
         log("Ended mutation! {} elements were mutated.".format(counter))
 
     def _init_variables(self):
@@ -98,9 +103,11 @@ class GeneticSalesman(AbstractAlgorithm):
     def _swap_random_points(self, travel):
         first_random_point = self._random_travel_point()
         second_random_point = self._random_travel_point()
-        tmp = travel.city_numbers[first_random_point]
-        travel.city_numbers[first_random_point] = travel.city_numbers[second_random_point]
-        travel.city_numbers[second_random_point] = tmp
+        travel_city_numbers = travel.city_numbers
+        tmp = travel_city_numbers[first_random_point]
+        travel_city_numbers[first_random_point] = travel_city_numbers[second_random_point]
+        travel_city_numbers[second_random_point] = tmp
+        return Travel(travel_city_numbers, self.cities)
 
     def _crossover_single_elem(self):
         left_elem = self._get_random_population_elem()
